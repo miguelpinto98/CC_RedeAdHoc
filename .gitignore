@@ -4,3 +4,5 @@
 *.jar
 *.war
 *.ear
+/Rede_AdHoc/nbproject/private/
+/Rede_AdHoc/build/
