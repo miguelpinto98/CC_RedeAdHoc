@@ -6,3 +6,5 @@
 *.ear
 /Rede_AdHoc/nbproject/private/
 /Rede_AdHoc/build/
+/adhoc_app/nbproject/private/
+/adhoc_app/build/
