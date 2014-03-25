@@ -8,10 +8,8 @@ public class Adhoc_app {
     public static void main(String[] args) throws IOException {
         MulticastSocket socket = new MulticastSocket(9999);
         InetAddress address = InetAddress.getByName("230.0.0.1");
-        DatagramPacket packet = null;
         socket.joinGroup(address);
 
-        while(true) {
             HandlerReceive tr = new HandlerReceive(socket,address);
             HandlerSend ts = new HandlerSend(socket,address);
             tr.start();
@@ -20,7 +18,6 @@ public class Adhoc_app {
             if(false) {
                 socket.leaveGroup(address);
                 socket.close();
-            }
         }
     }
 }

@@ -20,15 +20,16 @@ public class HandlerReceive extends Thread {
         this.address=address;
     }
     
-    @Override
+  @Override
     public void run() {
         try {
-            String msg = "Hello";
+            byte[] buffer = new byte[50];
+            this.packet = new DatagramPacket(buffer, buffer.length);
             
-            this.packet = new DatagramPacket(msg.getBytes(), msg.length(),this.address,9999);
-            socket.send(this.packet);
+            socket.receive(this.packet);
+            System.out.println("ABC "+new String(buffer));
         } catch (IOException ex) {
-            Logger.getLogger(HandlerReceive.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HandlerSend.class.getName()).log(Level.SEVERE, null, ex);
         }
-     }
+    }   
 }

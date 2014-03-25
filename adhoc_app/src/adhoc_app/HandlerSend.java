@@ -21,13 +21,12 @@ public class HandlerSend extends Thread {
     @Override
     public void run() {
         try {
-            byte[] buffer = new byte[1024];
-            this.packet = new DatagramPacket(buffer, buffer.length);
+            String msg = "Hello";
             
-            socket.receive(this.packet);
-            System.out.println(buffer.toString());
+            this.packet = new DatagramPacket(msg.getBytes(), msg.length(),this.address,9999);
+            socket.send(this.packet);
         } catch (IOException ex) {
-            Logger.getLogger(HandlerSend.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HandlerReceive.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
