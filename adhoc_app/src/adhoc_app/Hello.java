@@ -1,8 +1,10 @@
 package adhoc_app;
 
-public class Hello extends Protocolo {
-    public static int helloInterval;
-    public static int deadInterval;
+import java.io.Serializable;
+
+public class Hello extends Protocolo implements Serializable {
+    public static int helloInterval = 5000;
+    public static int deadInterval = 20000;
     
     private String message;
 
