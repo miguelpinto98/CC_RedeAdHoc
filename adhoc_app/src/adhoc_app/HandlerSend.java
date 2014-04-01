@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HandlerSend extends Thread {
+public class HandlerSend extends TimerTask {
     private MulticastSocket socket;
     private DatagramPacket packet;
     private InetAddress address;
