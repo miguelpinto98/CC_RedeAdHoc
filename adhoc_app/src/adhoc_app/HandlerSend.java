@@ -23,7 +23,7 @@ public class HandlerSend extends TimerTask {
     public void run() {
         try {
             Hello ola = new Hello("Host");
-            byte [] id = Adhoc_app.serializa(ola);
+            byte [] id = Utilities.serializa(ola);
             this.packet = new DatagramPacket(id, id.length,this.address,9999);
             System.out.println("A enviar pacote");
             socket.send(this.packet);

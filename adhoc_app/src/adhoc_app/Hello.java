@@ -2,7 +2,7 @@ package adhoc_app;
 
 import java.io.Serializable;
 
-public class Hello extends Protocolo implements Serializable {
+public class Hello implements Serializable {
     public static int helloInterval = 5000;
     public static int deadInterval = 20000;
     

@@ -30,7 +30,7 @@ public class HandlerReceive extends Thread {
             
             while(true) {
                 socket.receive(this.packet);
-                Hello hl = (Hello) Adhoc_app.desSerializa(this.packet.getData());
+                Hello hl = (Hello) Utilities.desSerializa(this.packet.getData());
                 System.out.println("Recebi o pacote de "+ this.packet.getAddress() +" com a mensagem "+ hl.getMessage());
             }
         } catch (IOException ex) {

@@ -2,51 +2,33 @@ package adhoc_app;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
  
 public class Adhoc_app {
-    //private HashMap<String,Vizinho> vizinhos;
-    private ArrayList<String> vizinhos;
-
-    public ArrayList<String> getVizinhos() {
+    private HashMap<String,Vizinho> vizinhos;
+    
+    public HashMap<String, Vizinho> getVizinhos() {
         return vizinhos;
     }
 
-    public void setVizinhos(ArrayList<String> vizinhos) {
+    public void setVizinhos(HashMap<String, Vizinho> vizinhos) {
         this.vizinhos = vizinhos;
     }
-    
-    public static byte[] serializa(Object o) throws IOException{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(o);
-
-			return baos.toByteArray();
-	 }
-
-	 public static Object desSerializa(byte[] ab) throws IOException, ClassNotFoundException{
-			ByteArrayInputStream bais = new ByteArrayInputStream(ab);
-
-			ObjectInputStream ois = new ObjectInputStream(bais);
-
-			return ois.readObject();
-	 }
-
     
     public static void main(String[] args) throws IOException {
         try {
             MulticastSocket socket = new MulticastSocket(9999);
-            InetAddress address = InetAddress.getByName("230.0.0.1");
+            InetAddress address = InetAddress.getByName("FF02::1");
             socket.joinGroup(address);
             
             Timer send = new Timer();
             
             
             System.out.println("A Iniciar");
+            
             HandlerReceive tr = new HandlerReceive(socket,address);
             HandlerSend ts = new HandlerSend(socket,address);
             //ts.start();
