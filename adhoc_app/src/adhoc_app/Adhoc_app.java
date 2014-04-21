@@ -8,40 +8,43 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
  
 public class Adhoc_app {
-    private HashMap<String,Vizinho> vizinhos;
+    public static HashMap<String,Vizinhos> VIZINHOS = new HashMap<>();
+    public static final int PORT = 9999;
+    //public static final String GROUP = "FF02::1";
+    public static final String GROUP = "230.0.0.1";
     
-    public HashMap<String, Vizinho> getVizinhos() {
-        return vizinhos;
-    }
-
-    public void setVizinhos(HashMap<String, Vizinho> vizinhos) {
-        this.vizinhos = vizinhos;
+    public static void iniciaListaVizinhosHost() {
+        //VIZINHOS.put(address.getHostName(),new Vizinhos());
     }
     
     public static void main(String[] args) throws IOException {
         try {
-            MulticastSocket socket = new MulticastSocket(9999);
-            InetAddress address = InetAddress.getByName("FF02::1");
+            MulticastSocket socket = new MulticastSocket(PORT);
+            InetAddress address = InetAddress.getByName(GROUP);
             socket.joinGroup(address);
+
+            InetAddress abc = Utilities.encontrarMeuIP();
             
             Timer send = new Timer();
-            
-            
-            System.out.println("A Iniciar");
-            
+            Timer verVizinhos = new Timer();
+           
+            System.out.println("MEU IP: "+abc.getCanonicalHostName()+"\nA Iniciar");
             HandlerReceive tr = new HandlerReceive(socket,address);
+           
             HandlerSend ts = new HandlerSend(socket,address);
-            //ts.start();
             send.schedule(ts, 0, Hello.helloInterval);
+
+            VerificaVizinhos vv = new VerificaVizinhos();
+            verVizinhos.schedule(vv, 0, Hello.deadInterval);
             
             tr.start();
             tr.join();
         
-            
+            /*
             if(false) {
                 socket.leaveGroup(address);
                 socket.close();
-            }
+            }*/
         } catch (InterruptedException ex) {
             Logger.getLogger(Adhoc_app.class.getName()).log(Level.SEVERE, null, ex);
         }

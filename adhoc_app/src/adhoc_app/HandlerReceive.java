@@ -31,8 +31,11 @@ public class HandlerReceive extends Thread {
             while(true) {
                 socket.receive(this.packet);
                 Hello hl = (Hello) Utilities.desSerializa(this.packet.getData());
-                System.out.println("Recebi o pacote de "+ this.packet.getAddress() +" com a mensagem "+ hl.getMessage());
+                
+                String add = this.packet.getAddress().toString();
+                System.out.println("Recebi o pacote de "+ this.packet.getAddress() +" com a mensagem "+ hl.getMessage()); 
             }
+            
         } catch (IOException ex) {
             Logger.getLogger(HandlerSend.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
