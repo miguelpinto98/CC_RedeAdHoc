@@ -12,17 +12,20 @@ public class HandlerSend extends TimerTask {
     private MulticastSocket socket;
     private DatagramPacket packet;
     private InetAddress address;
+    private String ipEmissor;
+    private String hostName;
     
-    
-    HandlerSend(MulticastSocket socket, InetAddress address) {
+    HandlerSend(MulticastSocket socket, InetAddress address, String ipEmissor, String NameEmissor) {
         this.socket = socket;
         this.address = address;
+        this.ipEmissor = ipEmissor;
+        this.hostName = NameEmissor;
     }
     
     @Override
     public void run() {
         try {
-            Hello ola = new Hello("Host");
+            Hello ola = new Hello("Pacote Hello", this.ipEmissor, this.hostName);
             byte [] id = Utilities.serializa(ola);
             this.packet = new DatagramPacket(id, id.length,this.address,9999);
             System.out.println("A enviar pacote");
