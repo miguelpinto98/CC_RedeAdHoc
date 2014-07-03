@@ -11,7 +11,6 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,17 +56,6 @@ public class Utilities {
             }
 	} 
 	return null ;
-    }
-    
-    public static String encontraHostName1000()  {
-        try {
-            Process exec = Runtime.getRuntime().exec("hostname");
-            return exec.getOutputStream().toString();
-        } catch (IOException ex) {
-            System.err.println("HostName Not Found!");
-            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
     }
     
     public static String encontraHostName() {
