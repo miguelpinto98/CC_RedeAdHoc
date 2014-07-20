@@ -13,11 +13,13 @@ public class Adhoc_app {
     public static final int PORT = 9999;
     public static final String GROUP = "FF02::1";    
     public static final String HOSTNAME = Utilities.encontraHostName();
+    public static final InetAddress ADDDRESS = Utilities.encontrarMeuIP();
     
     /* Guardar os Vizinhos de um Host */
     public static HashMap<String,Host> vizinhos = new HashMap<String,Host>();
+    public static HashMap<String,Table> destinos = new HashMap<String, Table>();
     
-    public static synchronized void neighborsSync(String NameEmissor, InetAddress IpEmissor, int Porta, HashSet<String> vizs) {  
+    public static synchronized void neighborsSync(String NameEmissor, InetAddress IpEmissor, int Porta, HashMap<String,InetAddress> vizs) {  
         if(Adhoc_app.vizinhos.containsKey(NameEmissor)) {                    
             Host h = Adhoc_app.vizinhos.remove(NameEmissor);
 

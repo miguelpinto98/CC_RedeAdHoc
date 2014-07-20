@@ -35,10 +35,11 @@ public class HandlerMessage extends Thread {
                 TW th = new TW(address, host, parts[1].toUpperCase(),parts[2]);
                 byte[] bs = Utilities.serializa(th);
                 
-                DatagramPacket packet = new DatagramPacket(bs,bs.length,this.address,9999);
-                DatagramSocket clientSocket = new DatagramSocket();
-                clientSocket.send(packet);
-                
+                if(bs.length <= TW.messagesize) {
+                    DatagramPacket packet = new DatagramPacket(bs,bs.length,this.address,9999);
+                    DatagramSocket clientSocket = new DatagramSocket();
+                    clientSocket.send(packet);
+                }
                 client.close();
             } 
         } catch (IOException ex) {

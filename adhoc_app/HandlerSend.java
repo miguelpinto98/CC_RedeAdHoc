@@ -28,12 +28,12 @@ public class HandlerSend extends TimerTask {
     public void run() {
         HashMap<String,Host> vizs = Adhoc_app.CloneMapVizinhos();
         try {
-            HashSet<String> aux = new HashSet<String>();
+            HashMap<String,InetAddress> aux = new HashMap<String,InetAddress>();
             for(Host h : vizs.values())
                 if(h.getStatus()==1)
-                    aux.add(h.getName());
+                    aux.put(h.getName(),h.getIp());
             
-            Hello ola = new Hello("Pacote Hello", Utilities.encontrarMeuIP(), this.hostName,aux);
+            Hello ola = new Hello("Pacote Hello", Utilities.encontrarMeuIP(),this.hostName,aux);
             byte [] id = Utilities.serializa(ola);
             this.packet = new DatagramPacket(id,id.length,address,9999);
             System.out.println("A enviar pacote HELLO");
@@ -46,7 +46,7 @@ public class HandlerSend extends TimerTask {
             for(Host h : vizs.values()) {
                 if(h.getStatus()==1) {
                     System.out.println("VP" +h.getName());
-                    for(String s : h.getVizinhos()) {
+                    for(String s : h.getVizinhos().keySet()) {
                         System.out.println("    VS" +s); 
                     }
                 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 public class TW extends Protocol implements Serializable {
+    public static int messagesize = 500;
+    
     private String destino;
     private String text;
     

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -21,6 +22,8 @@ public class Utilities {
     
 	ObjectOutputStream oos = new ObjectOutputStream(baos);
 	oos.writeObject(o);
+        oos.flush();
+        oos.close();
 
 	return baos.toByteArray();
     }
@@ -29,7 +32,8 @@ public class Utilities {
 	ByteArrayInputStream bais = new ByteArrayInputStream(ab);
 
 	ObjectInputStream ois = new ObjectInputStream(bais);
-
+        ois.close();
+        
 	return ois.readObject();
     }
     

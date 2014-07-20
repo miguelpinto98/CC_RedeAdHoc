@@ -1,4 +1,5 @@
-CC_RedeAdHoc
-============
+Trabalho Prático Comunicação por Computador - Rede Adhoc
+===============================================
 
-Rede AdHoc
+================== Objetivo ======================
+O principal objectivo é desenhar e implementar um serviço de mensagens curtas (tamanho máximo bem determinado) sobre IPv6. Serão usados dois protocolos diferentes: um para descobrir rotas e outro para enviar e receber as mensagens propriamente ditas.

@@ -3,7 +3,7 @@ package adhoc_app;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class Host implements Serializable {
     private InetAddress ip;
@@ -11,9 +11,9 @@ public class Host implements Serializable {
     private int porta;
     private GregorianCalendar lastResponse;
     private int status;
-    private HashSet<String> vizinhos;
+    private HashMap<String,InetAddress> vizinhos;
 
-    public Host(InetAddress ip, String name, int porta, HashSet<String> vizinhos) {
+    public Host(InetAddress ip, String name, int porta, HashMap<String,InetAddress> vizinhos) {
         this.ip = ip;
         this.name = name;
         this.porta = porta;
@@ -21,7 +21,16 @@ public class Host implements Serializable {
         this.status = 1;
         this.vizinhos = vizinhos;
     }
-
+    
+    public Host(InetAddress address, String name) {
+        this.ip = address;
+        this.name = name;
+        this.porta = 9999;
+        this.lastResponse = null;
+        this.status = 1;
+        this.vizinhos = null;
+    }
+    
     private Host(Host aThis) {
         this.ip = aThis.getIp();
         this.name = aThis.getName();
@@ -71,11 +80,11 @@ public class Host implements Serializable {
         this.status = status;
     }
 
-    public HashSet<String> getVizinhos() {
+    public HashMap<String,InetAddress> getVizinhos() {
         return vizinhos;
     }
 
-    public void setVizinhos(HashSet<String> vizinhos) {
+    public void setVizinhos(HashMap<String,InetAddress> vizinhos) {
         this.vizinhos = vizinhos;
     }
 

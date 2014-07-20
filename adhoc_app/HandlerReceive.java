@@ -2,11 +2,11 @@ package adhoc_app;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,60 +27,118 @@ public class HandlerReceive extends Thread {
         try {
             byte[] buffer = new byte[MAXBUFFER];
             this.packet = new DatagramPacket(buffer, buffer.length);
+            boolean flag = true;
             
-            while(true) {
+            while(true) { 
                 socket.receive(this.packet);
                 Object obj = Utilities.desSerializa(this.packet.getData());
                 
                 if(obj instanceof Protocol) {
-                    if(obj.getClass().equals(Hello.class)) {
+                    if(obj.getClass().equals(Hello.class)) {    // HELLO
                         Hello hl = (Hello) obj;
                 
                         if(!hl.getHostNameEmissor().equals(Adhoc_app.HOSTNAME))
-                            System.out.println(hl.getHostNameEmissor()+">Recebi o pacote HELLO de "+ this.packet.getAddress() +" <> "+hl.getIpEmissor()); 
-                
+                            System.out.println(hl.getHostNameEmissor()+">>Recebi o pacote HELLO de "+hl.getIpEmissor()); 
+
                         neighborsTest(hl.getHostNameEmissor(),hl.getIpEmissor(),hl.getVizinhos());
                         testStatusHost();
                     }
                     
-                    if(obj.getClass().equals(RouteRequest.class)) {
+                    if(obj.getClass().equals(RouteRequest.class)) { // ROUTE REQUEST
+                        boolean encontrado = false;
                         RouteRequest rq = (RouteRequest) obj;
+                        rq.addVisitados(new Host(Utilities.encontrarMeuIP(), Adhoc_app.HOSTNAME));
                         
-                        if(rq.getNodoDestino().equals(Adhoc_app.HOSTNAME)) {
-                            //RouteReply rp = new RouteReply(Utilities.encontrarMeuIP().getHostName(), Adhoc_app.HOSTNAME, new ArrayList<String>());
-                         
+                        for(Host h : Adhoc_app.CloneMapVizinhos().values()) {
+                            
+                            for(String nodo : h.getVizinhos().keySet()) {
+                                if(nodo.equals(rq.getDestino())) {
+                                    rq.addVisitados(h); rq.addVisitados(new Host(h.getVizinhos().get(nodo), nodo));
+                                    
+                                    RouteReply rrp = new RouteReply(rq.getIpEmissor(), rq.getDestino(), rq.getVisitados().size()-2);
+                                    rrp.setCaminho(rq.getVisitados());
+                                    prepareSerializa(rrp, h.getIp());
+                                    
+                                    //System.out.println("ALOOOOOOOOOOOOOO"+rq.getIpEmissor().getHostName()+"OOOOOOOOOOOOOOO"+h.getName()+nodo);
+                                    encontrado = true;
+                                }
+                            }     
+                            if(!encontrado && !rq.existe(h.getName())) {
+                                //System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"+h.getName());
+                                prepareSerializa(rq, h.getIp());
+                            }
                         }
                     }
                     
-                    if(obj.getClass().equals(TW.class)) {
+                    if(obj.getClass().equals(RouteReply.class)) {   //ROUTE REPLY
+                        RouteReply rp = (RouteReply) obj;
+                        int s = rp.getStep()-1;
+                        
+                        if(s<0) {
+                            System.out.println("CHEGOU PEDIDO ROUTE REPLY");
+                            
+                        } else {
+                            if(s==0) {
+                                rp.setStep(s);
+                                
+                                System.out.println("A CHEGAR AO PROPRIO EMISSOR"+rp.getHostNameEmissor());
+                                prepareSerializa(rp, rp.getIpEmissor());
+                            } else {
+                                Host h = rp.getCaminho().get(s);
+                                rp.setStep(s);
+                                System.out.println("A VOLTAR PARA TRAS DESTINO-"+h.getName()+h.getIp().getHostName());
+                                prepareSerializa(rp, h.getIp());
+                            }
+                        }
+                    }
+                    
+                    if(obj.getClass().equals(TW.class)) {       // TW
                         TW tw = (TW) obj;
                         String dest = tw.getDestino().replace("#", "");
                         
                         Message msg = new Message(tw.getIpEmissor(),tw.getHostNameEmissor(),dest,tw.getText());
-                        byte[] bs = Utilities.serializa(msg);
-                        DatagramPacket dpck = new DatagramPacket(bs,bs.length,tw.getIpEmissor(),9999);
-                        socket.send(dpck);
+                        prepareSerializa(msg, tw.getIpEmissor());
                     }
                     
-                    if(obj.getClass().equals(Message.class)) {
+                    if(obj.getClass().equals(Message.class)) {      //MESSAGE
                         Message msg = (Message) obj;
-                        System.out.println("LIXOOOOOO");
                         
                         if(Adhoc_app.HOSTNAME.equals(msg.getTo())) {
-                            System.out.println("### MSG FIM");
+                            System.out.println("### MSG FINAL -> "+msg.getMessage());
+                        } else {
+                            if(Adhoc_app.CloneMapVizinhos().containsKey(msg.getTo())) {
+                                Host h = Adhoc_app.CloneMapVizinhos().get(msg.getTo());
+                                System.out.println("### A Mandar MSG AO VIZINHO "+h.getIp().getHostName());                            
+                                prepareSerializa(msg, h.getIp());
+                            } else {
+                                flag = false;
+                                Iterator<Host> it = Adhoc_app.CloneMapVizinhos().values().iterator();
+                                while(it.hasNext() && !flag) {
+                                    Host h = it.next();
+                                    Iterator<String> str = h.getVizinhos().keySet().iterator();
+                                    while(str.hasNext() && !flag) {
+                                        String nodo = str.next();
+                                        if(nodo.equals(msg.getTo())) {
+                                            System.out.println("### A Preparar MSG AO SUB-VIZINHO");
+                                            prepareSerializa(msg,h.getIp());
+                                            flag = true;
+                                        }
+                                    }   
+                                }
+                            }
                         }
                         
-                        if(Adhoc_app.CloneMapVizinhos().containsKey(msg.getTo())) {
-                            Host h = Adhoc_app.CloneMapVizinhos().get(msg.getTo());
+                        if(!flag) {
+                            RouteRequest rrq = new RouteRequest(Adhoc_app.ADDDRESS, msg.getHostNameEmissor(), msg.getTo());
+                            rrq.addVisitados(new Host(Adhoc_app.ADDDRESS, Adhoc_app.HOSTNAME));
+   
+                            for(Host h : Adhoc_app.CloneMapVizinhos().values()) {
+                                prepareSerializa(rrq,h.getIp());
+                            }
                             
-                            System.out.println("### A Mandar MSG AO VIZINHo "+h.getIp().toString());
                             
-                            byte[] bs = Utilities.serializa(msg);
-                            DatagramPacket dpck = new DatagramPacket(bs,bs.length,h.getIp(),9999);
-                            //DatagramSocket clientSocket = new DatagramSocket();
-                            socket.send(dpck);
-                            //clientSocket.close();
                         }
+                        flag=true;
                     }
                 }
             }
@@ -89,13 +147,19 @@ public class HandlerReceive extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(HandlerReceive.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }   
+    }
+    
+    private void prepareSerializa(Object obj, InetAddress address) throws IOException {
+        byte[] bs = Utilities.serializa(obj);
+        DatagramPacket dp = new DatagramPacket(bs,bs.length,address,9999);
+        this.socket.send(dp);
+    }
 
     private void testStatusHost() {
         Adhoc_app.StatusSync();
     }
 
-    private void neighborsTest(String NameEmissor, InetAddress IpEmissor, HashSet<String> vizinhos) {
+    private void neighborsTest(String NameEmissor, InetAddress IpEmissor, HashMap<String,InetAddress> vizinhos) {
         vizinhos.remove(Adhoc_app.HOSTNAME);
         Adhoc_app.neighborsSync(NameEmissor, IpEmissor, this.packet.getPort(), vizinhos);
     }
