@@ -1,5 +1,6 @@
-Trabalho Pr·tico ComunicaÁ„o por Computador - Rede Adhoc
-===============================================
+Trabalho Pr√°tico Comunica√ß√£o por Computador - Rede Adhoc
+==================================================================
 
-================== Objetivo ======================
-O principal objectivo È desenhar e implementar um serviÁo de mensagens curtas (tamanho m·ximo bem determinado) sobre IPv6. Ser„o usados dois protocolos diferentes: um para descobrir rotas e outro para enviar e receber as mensagens propriamente ditas.
+<b> Objetivo</b>
+
+O principal objectivo √© desenhar e implementar um servi√ßo de mensagens curtas (tamanho m√°ximo bem determinado) sobre IPv6. Ser√£o usados dois protocolos diferentes: um para descobrir rotas e outro para enviar e receber as mensagens propriamente ditas.
