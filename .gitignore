@@ -1,18 +1,21 @@
+### Java ###
 *.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
 
 # Package Files #
 *.jar
 *.war
 *.ear
-/Rede_AdHoc/nbproject/private/
-/Rede_AdHoc/build/
-/adhoc_app/nbproject/private/
-/adhoc_app/build/
-adhoc_app/nbproject/genfiles.properties
 
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+### OTHERS
+adhoc_app/nbproject/private/
+adhoc_app/build/
+adhoc_app/nbproject/genfiles.properties
 adhoc_app/nbproject/build-impl.xml
-
 adhoc_app/nbproject/project.properties
-
 adhoc_app/nbproject/genfiles.properties
-/PascoaPOO/nbproject/private/
